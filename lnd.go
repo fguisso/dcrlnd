@@ -206,7 +206,7 @@ func Main(lisCfg ListenerCfg) error {
 	if cfg.CPUProfile != "" {
 		f, err := os.Create(cfg.CPUProfile)
 		if err != nil {
-			err := fmt.Errorf("Unable to create CPU profile: %v",
+			err := fmt.Errorf("unable to create CPU profile: %v",
 				err)
 			ltndLog.Error(err)
 			return err
@@ -234,7 +234,7 @@ func Main(lisCfg ListenerCfg) error {
 		channeldb.OptionSetSyncFreelist(cfg.SyncFreelist),
 	)
 	if err != nil {
-		err := fmt.Errorf("Unable to open channeldb: %v", err)
+		err := fmt.Errorf("unable to open channeldb: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -253,7 +253,7 @@ func Main(lisCfg ListenerCfg) error {
 		cfg.TLSExtraDomains, cfg.RPCListeners,
 	)
 	if err != nil {
-		err := fmt.Errorf("Unable to load TLS credentials: %v", err)
+		err := fmt.Errorf("unable to load TLS credentials: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -341,7 +341,7 @@ func Main(lisCfg ListenerCfg) error {
 			restProxyDest, tlsCfg, walletUnlockerListeners,
 		)
 		if err != nil {
-			err := fmt.Errorf("Unable to set up wallet password "+
+			err := fmt.Errorf("unable to set up wallet password "+
 				"listeners: %v", err)
 			ltndLog.Error(err)
 			return err
@@ -365,7 +365,7 @@ func Main(lisCfg ListenerCfg) error {
 			networkDir, macaroons.IPLockChecker,
 		)
 		if err != nil {
-			err := fmt.Errorf("Unable to set up macaroon "+
+			err := fmt.Errorf("unable to set up macaroon "+
 				"authentication: %v", err)
 			ltndLog.Error(err)
 			return err
@@ -375,7 +375,7 @@ func Main(lisCfg ListenerCfg) error {
 		// Try to unlock the macaroon store with the private password.
 		err = macaroonService.CreateUnlock(&privateWalletPw)
 		if err != nil {
-			err := fmt.Errorf("Unable to unlock macaroons: %v", err)
+			err := fmt.Errorf("unable to unlock macaroons: %v", err)
 			ltndLog.Error(err)
 			return err
 		}
@@ -389,7 +389,7 @@ func Main(lisCfg ListenerCfg) error {
 				cfg.ReadMacPath, cfg.InvoiceMacPath,
 			)
 			if err != nil {
-				err := fmt.Errorf("Unable to create macaroons "+
+				err := fmt.Errorf("unable to create macaroons "+
 					"%v", err)
 				ltndLog.Error(err)
 				return err
@@ -407,7 +407,7 @@ func Main(lisCfg ListenerCfg) error {
 		walletInitParams.Conn, cfg.Dcrwallet.AccountNumber,
 	)
 	if err != nil {
-		err := fmt.Errorf("Unable to create chain control: %v", err)
+		err := fmt.Errorf("unable to create chain control: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -456,7 +456,7 @@ func Main(lisCfg ListenerCfg) error {
 		},
 	})
 	if err != nil {
-		err := fmt.Errorf("Unable to derive node private key: %v", err)
+		err := fmt.Errorf("unable to derive node private key: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -477,7 +477,7 @@ func Main(lisCfg ListenerCfg) error {
 		var err error
 		towerClientDB, err = wtdb.OpenClientDB(graphDir)
 		if err != nil {
-			err := fmt.Errorf("Unable to open watchtower client "+
+			err := fmt.Errorf("unable to open watchtower client "+
 				"database: %v", err)
 			ltndLog.Error(err)
 			return err
@@ -518,7 +518,7 @@ func Main(lisCfg ListenerCfg) error {
 
 		towerDB, err := wtdb.OpenTowerDB(towerDBDir)
 		if err != nil {
-			err := fmt.Errorf("Unable to open watchtower "+
+			err := fmt.Errorf("unable to open watchtower "+
 				"database: %v", err)
 			ltndLog.Error(err)
 			return err
@@ -534,7 +534,7 @@ func Main(lisCfg ListenerCfg) error {
 			},
 		)
 		if err != nil {
-			err := fmt.Errorf("Unable to derive watchtower "+
+			err := fmt.Errorf("unable to derive watchtower "+
 				"private key: %v", err)
 			ltndLog.Error(err)
 			return err
@@ -572,7 +572,7 @@ func Main(lisCfg ListenerCfg) error {
 
 		wtConfig, err := cfg.Watchtower.Apply(wtCfg, lncfg.NormalizeAddresses)
 		if err != nil {
-			err := fmt.Errorf("Unable to configure watchtower: %v",
+			err := fmt.Errorf("unable to configure watchtower: %v",
 				err)
 			ltndLog.Error(err)
 			return err
@@ -580,7 +580,7 @@ func Main(lisCfg ListenerCfg) error {
 
 		tower, err = watchtower.New(wtConfig)
 		if err != nil {
-			err := fmt.Errorf("Unable to create watchtower: %v", err)
+			err := fmt.Errorf("unable to create watchtower: %v", err)
 			ltndLog.Error(err)
 			return err
 		}
@@ -597,7 +597,7 @@ func Main(lisCfg ListenerCfg) error {
 		torController,
 	)
 	if err != nil {
-		err := fmt.Errorf("Unable to create server: %v", err)
+		err := fmt.Errorf("unable to create server: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -607,19 +607,19 @@ func Main(lisCfg ListenerCfg) error {
 	// it at will.
 	atplCfg, err := initAutoPilot(server, cfg.Autopilot, cfg)
 	if err != nil {
-		err := fmt.Errorf("Unable to initialize autopilot: %v", err)
+		err := fmt.Errorf("unable to initialize autopilot: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
 
 	atplManager, err := autopilot.NewManager(atplCfg)
 	if err != nil {
-		err := fmt.Errorf("Unable to create autopilot manager: %v", err)
+		err := fmt.Errorf("unable to create autopilot manager: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
 	if err := atplManager.Start(); err != nil {
-		err := fmt.Errorf("Unable to start autopilot manager: %v", err)
+		err := fmt.Errorf("unable to start autopilot manager: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -647,12 +647,12 @@ func Main(lisCfg ListenerCfg) error {
 		tower, tlsCfg, rpcListeners, chainedAcceptor,
 	)
 	if err != nil {
-		err := fmt.Errorf("Unable to create RPC server: %v", err)
+		err := fmt.Errorf("unable to create RPC server: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
 	if err := rpcServer.Start(); err != nil {
-		err := fmt.Errorf("Unable to start RPC server: %v", err)
+		err := fmt.Errorf("unable to start RPC server: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -661,7 +661,7 @@ func Main(lisCfg ListenerCfg) error {
 	// With all the relevant chains initialized, we can finally start the
 	// server itself.
 	if err := server.Start(); err != nil {
-		err := fmt.Errorf("Unable to start server: %v", err)
+		err := fmt.Errorf("unable to start server: %v", err)
 		ltndLog.Error(err)
 		return err
 	}
@@ -672,7 +672,7 @@ func Main(lisCfg ListenerCfg) error {
 	// stopped together with the autopilot service.
 	if cfg.Autopilot.Active {
 		if err := atplManager.StartAgent(); err != nil {
-			err := fmt.Errorf("Unable to start autopilot agent: %v",
+			err := fmt.Errorf("unable to start autopilot agent: %v",
 				err)
 			ltndLog.Error(err)
 			return err
@@ -681,7 +681,7 @@ func Main(lisCfg ListenerCfg) error {
 
 	if cfg.Watchtower.Active {
 		if err := tower.Start(); err != nil {
-			err := fmt.Errorf("Unable to start watchtower: %v", err)
+			err := fmt.Errorf("unable to start watchtower: %v", err)
 			ltndLog.Error(err)
 			return err
 		}
