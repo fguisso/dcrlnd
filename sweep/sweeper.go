@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/decred/dcrd/chaincfg/chainhash"
 	"github.com/decred/dcrd/chaincfg/v2"
 	"github.com/decred/dcrd/dcrutil/v2"
 	"github.com/decred/dcrd/wire"
@@ -1288,6 +1289,11 @@ func (s *UtxoSweeper) CreateSweepTx(inputs []input.Input, feePref FeePreference,
 // in dcrd) from blocking all other retried inputs in the same tx.
 func DefaultNextAttemptDeltaFunc(attempts int) int32 {
 	return 2 + rand.Int31n(1<<uint(attempts-1))
+}
+
+// ListSweeps returns a list of the the sweeps recorded by the sweep store.
+func (s *UtxoSweeper) ListSweeps() ([]chainhash.Hash, error) {
+	return s.cfg.Store.ListSweeps()
 }
 
 // init initializes the random generator for random input rescheduling.
