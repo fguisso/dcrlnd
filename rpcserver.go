@@ -3693,7 +3693,7 @@ type rpcPaymentIntent struct {
 	rHash                [32]byte
 	cltvDelta            uint16
 	routeHints           [][]zpay32.HopHint
-	outgoingChannelID    *uint64
+	outgoingChannelIDs   []uint64
 	lastHop              *route.Vertex
 	ignoreMaxOutboundAmt bool
 	destFeatures         *lnwire.FeatureVector
@@ -3736,9 +3736,12 @@ func (r *rpcServer) extractPaymentIntent(rpcPayReq *rpcPaymentRequest) (rpcPayme
 	}
 
 	// If there are no routes specified, pass along a outgoing channel
-	// restriction if specified.
+	// restriction if specified. The main server rpc does not support
+	// multiple channel restrictions.
 	if rpcPayReq.OutgoingChanId != 0 {
-		payIntent.outgoingChannelID = &rpcPayReq.OutgoingChanId
+		payIntent.outgoingChannelIDs = []uint64{
+			rpcPayReq.OutgoingChanId,
+		}
 	}
 
 	// Pass along a last hop restriction if specified.
@@ -4061,20 +4064,20 @@ func (r *rpcServer) dispatchPaymentIntent(
 	// router, otherwise we'll create a payment session to execute it.
 	if payIntent.route == nil {
 		payment := &routing.LightningPayment{
-			Target:            payIntent.dest,
-			Amount:            payIntent.mat,
-			FinalCLTVDelta:    payIntent.cltvDelta,
-			FeeLimit:          payIntent.feeLimit,
-			CltvLimit:         payIntent.cltvLimit,
-			PaymentHash:       payIntent.rHash,
-			RouteHints:        payIntent.routeHints,
-			OutgoingChannelID: payIntent.outgoingChannelID,
-			LastHop:           payIntent.lastHop,
-			PaymentRequest:    payIntent.payReq,
-			PayAttemptTimeout: routing.DefaultPayAttemptTimeout,
-			DestCustomRecords: payIntent.destCustomRecords,
-			DestFeatures:      payIntent.destFeatures,
-			PaymentAddr:       payIntent.paymentAddr,
+			Target:             payIntent.dest,
+			Amount:             payIntent.mat,
+			FinalCLTVDelta:     payIntent.cltvDelta,
+			FeeLimit:           payIntent.feeLimit,
+			CltvLimit:          payIntent.cltvLimit,
+			PaymentHash:        payIntent.rHash,
+			RouteHints:         payIntent.routeHints,
+			OutgoingChannelIDs: payIntent.outgoingChannelIDs,
+			LastHop:            payIntent.lastHop,
+			PaymentRequest:     payIntent.payReq,
+			PayAttemptTimeout:  routing.DefaultPayAttemptTimeout,
+			DestCustomRecords:  payIntent.destCustomRecords,
+			DestFeatures:       payIntent.destFeatures,
+			PaymentAddr:        payIntent.paymentAddr,
 
 			// Don't enable multi-part payments on the main rpc.
 			// Users need to use routerrpc for that.
