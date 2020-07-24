@@ -15,7 +15,7 @@ Name           | Version
 ---------------|---------
 docker-compose | 1.25.5
 docker         | 19.03.10
-  
+
 ### Table of Contents
 
 * [Create Lightning Network Cluster](#create-lightning-network-cluster)
@@ -51,27 +51,27 @@ topology, and send a payment from `Alice` to `Bob`.
                                   connected to different Decred nodes.
 ```
 
-Run `docker-compose up --no-start` to create network, volumes and build the services `dcrd`, `dcrwallet` and `dcrlnd`.
+Run `docker-compose -f simnet-compose.yml up --no-start` to create network, volumes and build the services `dcrd`, `dcrwallet` and `dcrlnd`.
 
 ### dcrd, dcrwallet and MVW
 We need to start `dcrd` service and generate 18 blocks for the first coinbase to mature, because without coins, the MVW(Minimum Voting Wallet) can't buy tickets.
 ```
 # Run dcrd service for the first time.
-docker-compose start dcrd
+docker-compose -f simnet-compose.yml start dcrd
 
 # Use dcrctl tool that is inside dcrd
 # to generate 18 blocks.
-docker-compose exec dcrd dcrctl generate 18
+docker-compose -f simnet-compose.yml exec dcrd dcrctl generate 18
 ```
 Now we can start the `dcrwallet` and the MVW will work great.
-`docker-compose start dcrwallet`
+`docker-compose -f simnet-compose.yml start dcrwallet`
 
 ### dcrlnd, add Alice and Bob's nodes
 
 Create `Alice`s container and send funds from `dcrwallet`:
 ```bash
 #Create "Alice"s container
-docker-compose run -d --name alice dcrlnd
+docker-compose -f simnet-compose.yml run -d --name alice dcrlnd
 
 #Log into the "Alice" container
 docker exec -it alice bash
@@ -84,10 +84,10 @@ We can keep logged in `Alice` container, just need to use another terminal tab t
  * Send 1DCR from `dcrwallet` to `Alice` address 
 ```bash
 #Send from MVW to Alice's LNWallet
-docker-compose exec dcrd dcrctl --wallet sendfrom default <alice_address> 1
+docker-compose -f simnet-compose.yml exec dcrd dcrctl --wallet sendfrom default <alice_address> 1
 
 #Generate a block to update the wallet balance
-docker-compose exec dcrd dcrctl generate 1
+docker-compose -f simnet-compose.yml exec dcrd dcrctl generate 1
 
 #Check Alice's wallet balance
 alice$ dcrlncli --simnet walletbalance
@@ -96,7 +96,7 @@ alice$ dcrlncli --simnet walletbalance
 Create `Bob`s container and connect to `Alice`:
 ```bash
 #Create "Bob"s container
-docker-compose run -d --name bob dcrlnd
+docker-compose -f simnet-compose.yml run -d --name bob dcrlnd
 
 #Log into the "Bob" container
 docker exec -it bob bash
@@ -159,7 +159,7 @@ alice$ dcrlncli --simnet openchannel --node_key=<bob_pubkey> --local_amt=100000
 
 # Include funding transaction in block thereby opening the channel:
 # We need six confirmations to channel active
-$ docker-compose exec dcrd dcrctl generate 6
+$ docker-compose -f simnet-compose.yml exec dcrd dcrctl generate 6
 
 # Check that channel with "Bob" was opened:
 alice$ dcrlncli --simnet listchannels
@@ -254,7 +254,7 @@ alice$ dcrlncli --simnet listchannels
 alice$ dcrlncli --simnet closechannel <funding_txid> <output_index>
 
 # Include close transaction in a block thereby closing the channel:
-$ docker-compose exec dcrd dcrctl generate 6
+$ docker-compose -f simnet-compose.yml exec dcrd dcrctl generate 6
 
 # Check "Alice" on-chain balance was credited by her settled amount in the channel:
 alice$ dcrlncli --simnet walletbalance
@@ -302,14 +302,14 @@ alice$ dcrlncli --simnet openchannel --node_key=<bob_pubkey> --local_amt=100000
 
 # Include funding transaction in block thereby opening the channel:
 # We need six confirmations to channel active
-$ docker-compose exec dcrd dcrctl generate 6
+$ docker-compose -f simnet-compose.yml exec dcrd dcrctl generate 6
 ```
 
 Create the Carol's node and get pubkey
 
 ```bash
 # Create "Carol"s container
-docker-compose run -d --name carol dcrlnd
+docker-compose -f simnet-compose.yml run -d --name carol dcrlnd
 
 # Log into the "Carol" container
 docker exec -it carol bash
@@ -329,7 +329,7 @@ bob$ dcrlncli --simnet connect <carol_pubkey>@carol
 bob$ dcrlncli --simnet openchannel --node_key=<carol_pubkey> --local_amt=40000
 
 # Include funding transaction in block thereby opening the channel:
-docker-compose exec dcrd dcrctl generate 6
+docker-compose -f simnet-compose.yml exec dcrd dcrctl generate 6
 
 # Check that channel with "Carol" was opened:
 bob$ dcrlncli --simnet listchannels

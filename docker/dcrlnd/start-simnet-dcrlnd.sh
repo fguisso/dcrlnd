@@ -42,27 +42,24 @@ set_default() {
 RPCUSER=$(set_default "$RPCUSER" "devuser")
 RPCPASS=$(set_default "$RPCPASS" "devpass")
 DEBUG=$(set_default "$DEBUG" "info")
+BACKEND="dcrd"
 
 PARAMS=$(echo $PARAMS \
     --simnet \
-    --debuglevel="$DEBUG" \
-    --cafile="/rpc/rpc.cert" \
-    --rpccert="/rpc/rpc.cert" \
-    --rpckey="/rpc/rpc.key" \
-    --username="$RPCUSER" \
-    --password="$RPCPASS" \
+    --noseedbackup \
+    --logdir=/data \
+    --node=dcrd \
+    "--$BACKEND.rpccert"="/rpc/rpc.cert" \
+    "--$BACKEND.rpchost"="dcrd" \
+    "--$BACKEND.rpcuser"="$RPCUSER" \
+    "--$BACKEND.rpcpass"="$RPCPASS" \
     --rpclisten=0.0.0.0 \
-    --rpcconnect="dcrd" \
-    --enablevoting \
-    --enableticketbuyer \
-    --ticketbuyer.limit=5 \
-    --appdata="/data" \
-    --pass="$WALLET_PASS"
+    --restlisten=0.0.0.0 \
+    --listen=0.0.0.0 \
+    --debuglevel="$DEBUG" \
+    "$@"
 )
 
-# Add user parameters to command.
-PARAMS="$PARAMS $@"
-
 # Print command and start decred wallet.
-echo "Command: dcrwallet $PARAMS"
-exec dcrwallet $PARAMS
+echo "Command: dcrlnd $PARAMS"
+exec dcrlnd $PARAMS

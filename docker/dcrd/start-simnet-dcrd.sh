@@ -44,25 +44,39 @@ RPCPASS=$(set_default "$RPCPASS" "devpass")
 DEBUG=$(set_default "$DEBUG" "info")
 
 PARAMS=$(echo $PARAMS \
+    --configfile=/data/dcrd.conf \
     --simnet \
     --debuglevel="$DEBUG" \
-    --cafile="/rpc/rpc.cert" \
-    --rpccert="/rpc/rpc.cert" \
-    --rpckey="/rpc/rpc.key" \
-    --username="$RPCUSER" \
-    --password="$RPCPASS" \
+    --rpcuser="$RPCUSER" \
+    --rpcpass="$RPCPASS" \
+    --datadir=/data \
+    --logdir=/data \
+    --rpccert=/config/rpc.cert \
+    --rpckey=/config/rpc.key \
     --rpclisten=0.0.0.0 \
-    --rpcconnect="dcrd" \
-    --enablevoting \
-    --enableticketbuyer \
-    --ticketbuyer.limit=5 \
-    --appdata="/data" \
-    --pass="$WALLET_PASS"
+    --txindex
 )
+
+# Set the mining flag only if address is non empty.
+if [[ -n "$MINING_ADDRESS" ]]; then
+    PARAMS="$PARAMS --miningaddr=$MINING_ADDRESS"
+fi
+
+# Create the dcrctl.conf based in the updated variables.
+if [ ! -f "/root/.dcrctl/dcrctl.conf" ]; then
+mkdir /root/.dcrctl
+cat > "/root/.dcrctl/dcrctl.conf" <<EOF
+rpcuser=${RPCUSER}
+rpcpass=${RPCPASS}
+rpccert="/config/rpc.cert"
+walletrpcserver=dcrwallet
+EOF
+
+fi
 
 # Add user parameters to command.
 PARAMS="$PARAMS $@"
 
-# Print command and start decred wallet.
-echo "Command: dcrwallet $PARAMS"
-exec dcrwallet $PARAMS
+# Print command and start decred node.
+echo "Command: dcrd $PARAMS"
+exec dcrd $PARAMS

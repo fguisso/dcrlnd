@@ -42,7 +42,6 @@ set_default() {
 RPCUSER=$(set_default "$RPCUSER" "devuser")
 RPCPASS=$(set_default "$RPCPASS" "devpass")
 DEBUG=$(set_default "$DEBUG" "info")
-NETWORK=$(set_default "$NETWORK" "simnet")
 
 PARAMS=""
 if [ "$NETWORK" != "mainnet" ]; then
@@ -50,16 +49,15 @@ if [ "$NETWORK" != "mainnet" ]; then
 fi
 
 PARAMS=$(echo $PARAMS \
-    "--configfile=/data/dcrd.conf" \
-    "--debuglevel=$DEBUG" \
-    "--rpcuser=$RPCUSER" \
-    "--rpcpass=$RPCPASS" \
-    "--datadir=/data" \
-    "--logdir=/data" \
-    "--rpccert=/config/rpc.cert" \
-    "--rpckey=/config/rpc.key" \
-    "--rpclisten=0.0.0.0" \
-    "--txindex"
+    --debuglevel="$DEBUG" \
+    --rpcuser="$RPCUSER" \
+    --rpcpass="$RPCPASS" \
+    --datadir=/data \
+    --logdir=/data \
+    --rpccert=/config/rpc.cert \
+    --rpckey=/config/rpc.key \
+    --rpclisten=0.0.0.0 \
+    --txindex
 )
 
 # Set the mining flag only if address is non empty.

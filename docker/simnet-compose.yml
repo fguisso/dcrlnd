@@ -1,0 +1,65 @@
+version: "3.7"
+
+services:
+   dcrd:
+     container_name: dcrd
+     build:
+       context: dcrd/
+     volumes:
+       - shared:/config
+       - decred:/data
+     environment:
+       - RPCUSER
+       - RPCPASS
+       - DEBUG
+       - MINING_ADDRESS
+     networks:
+       - dcr-network
+     entrypoint: ["./start-simnet-dcrd.sh"]
+
+   dcrwallet:
+     container_name: dcrwallet
+     build:
+       context: dcrwallet/
+       args:
+         WALLET_SEED: "0000000000000000000000000000000000000000000000000000000000000000"
+         WALLET_PASS: "123"
+     volumes:
+       - shared:/rpc
+       - decred:/data
+     environment:
+       - RPCUSER
+       - RPCPASS
+       - DEBUG
+     networks:
+       - dcr-network
+     entrypoint: ["./start-dcrwallet.sh"]
+
+   dcrlnd:
+     build:
+       context: ../
+       dockerfile: docker/dcrlnd/Dockerfile
+     environment:
+       - RPCUSER
+       - RPCPASS
+       - DEBUG
+     networks:
+       - dcr-network
+     volumes:
+       - shared:/rpc
+     entrypoint: ["./start-simnet-dcrlnd.sh"]
+
+volumes:
+  # shared volume is need to store the dcrd rpc certificates and use it within
+  # dcrctl and dcrlnd containers.
+  shared:
+    driver: local
+
+  # decred volume is needed for maintaining blockchain persistence
+  # during dcrd container recreation.
+  decred:
+    driver: local
+
+networks:
+  dcr-network:
+    driver: bridge

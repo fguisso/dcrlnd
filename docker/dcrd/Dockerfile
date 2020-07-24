@@ -30,10 +30,12 @@ COPY --from=builder /go/bin/gencerts /bin/
 COPY --from=builder /go/bin/addblock /bin/
 
 COPY "start-dcrd.sh" .
+COPY "start-simnet-dcrd.sh" .
 
 # Generate an certificate for both dcrd and dcrwallet.
 RUN mkdir "/config" \
     &&  chmod +x start-dcrd.sh \
+    &&  chmod +x start-simnet-dcrd.sh \
     && "/bin/gencerts" --host="dcrd" --host="dcrwallet" --directory="/config" --force
 
 # Create a volume to house pregenerated RPC credentials. This will be

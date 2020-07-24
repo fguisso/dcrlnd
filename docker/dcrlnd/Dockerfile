@@ -29,4 +29,6 @@ COPY --from=builder /go/bin/dcrlnd /bin/
 
 # Copy the entrypoint script.
 COPY "docker/dcrlnd/start-dcrlnd.sh" .
+COPY "docker/dcrlnd/start-simnet-dcrlnd.sh" .
 RUN chmod +x start-dcrlnd.sh
+RUN chmod +x start-simnet-dcrlnd.sh
